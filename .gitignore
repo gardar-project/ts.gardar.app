@@ -1,8 +1,5 @@
-.DS_Store
-node_modules
-dist
-dev-dist
-build
-types
-.idea
-.github
+**/.DS_Store
+/node_modules
+/dist
+/types
+/.github
