@@ -1,8 +1,6 @@
 const { basename } = require('path');
 //const { esbuildPluginDecorator } = require('esbuild-plugin-decorator');
-const {
-    realpathSync, readFileSync, writeFileSync, renameSync, existsSync 
-} = require('fs');
+const { realpathSync, readFileSync, writeFileSync, renameSync, existsSync } = require('fs');
 const { spawnSync, execSync } = require('child_process');
 const esbuild = require('esbuild');
 
@@ -47,7 +45,7 @@ class Builder {
                 __COMPILED_AT__: `'${new Date().toUTCString()}'`,
                 ...buildConfig.constants,
             },
-            entryPoints: [ buildConfig.entry ],
+            entryPoints: [buildConfig.entry],
             format: buildConfig.format,
             logLevel: 'silent',
             metafile: true,
@@ -63,7 +61,7 @@ class Builder {
             target: `${buildConfig.platform.name}${buildConfig.platform.version}`,
         });
 
-        return new Promise(resolve => resolve(result));
+        return new Promise((resolve) => resolve(result));
     }
 
     sizeForDisplay(bytes) {
@@ -71,10 +69,10 @@ class Builder {
     }
 
     reportCompileResults(results) {
-        results.errors.forEach(errorMsg => this.writeln(`* Error: ${errorMsg}`));
-        results.warnings.forEach(msg => this.writeln(`* Warning: ${msg}`));
+        results.errors.forEach((errorMsg) => this.writeln(`* Error: ${errorMsg}`));
+        results.warnings.forEach((msg) => this.writeln(`* Warning: ${msg}`));
 
-        Object.keys(results.metafile.outputs).forEach(fn => {
+        Object.keys(results.metafile.outputs).forEach((fn) => {
             this.writeln(`*   » created '${fn}' (${this.sizeForDisplay(results.metafile.outputs[fn].bytes)})`);
         });
     }
@@ -91,11 +89,11 @@ class Builder {
 
         process.argv
             .slice(2)
-            .map(arg => {
+            .map((arg) => {
                 const hasMappedArg = typeof argMap[arg] === 'undefined';
                 return hasMappedArg ? { name: arg.replace(/^-+/, ''), value: true } : argMap[arg];
             })
-            .forEach(data => (this.config[data.name] = data.value));
+            .forEach((data) => (this.config[data.name] = data.value));
 
         console.log(this.config);
     }
@@ -106,7 +104,7 @@ class Builder {
         const binaryFilename = `${buildConfig.outdir}/${filename.replace(/.js$/, '')}`;
         const contents = readFileSync(`${buildConfig.outdir}/${filename}`, { encoding: 'utf-8' });
 
-        spawnSync('chmod', [ '+x', `${buildConfig.outdir}/${filename}` ], { stdio: 'ignore' });
+        spawnSync('chmod', ['+x', `${buildConfig.outdir}/${filename}`], { stdio: 'ignore' });
         writeFileSync(`${buildConfig.outdir}/${filename}`, `#!/usr/bin/node\n\n${contents}`, { encoding: 'utf-8' });
         renameSync(`${buildConfig.outdir}/${filename}`, `${buildConfig.outdir}/${newFilename}`);
 
@@ -116,29 +114,25 @@ class Builder {
     }
 
     compileBinaries() {
-        const platforms = [
-            'linux',
-            'macos',
-            'win' 
-        ];
+        const platforms = ['linux', 'macos', 'win'];
         const filename = basename(buildConfig.entry).replace(/\.ts$/, '.js');
-        const targets = platforms.map(t => `node16-${t.toLowerCase()}-x64`);
+        const targets = platforms.map((t) => `node16-${t.toLowerCase()}-x64`);
         const cmd = `npx pkg --compress Brotli --targets ${targets.join(',')} --out-path ${buildConfig.outdir} ${buildConfig.outdir}/${filename}`;
 
         execSync(cmd, { stdio: 'inherit' });
 
         const origBinaries = platforms
-            .map(os => `${buildConfig.outdir}/${filename.replace(/.js$/, '')}-${os}`)
-            .map(fn => (fn.includes('-win') ? `${fn}.exe` : fn));
+            .map((os) => `${buildConfig.outdir}/${filename.replace(/.js$/, '')}-${os}`)
+            .map((fn) => (fn.includes('-win') ? `${fn}.exe` : fn));
 
         const newBinaries = platforms
-            .map(os => `${buildConfig.outdir}/${pkg.name}-v${pkg.version}-${os}-x64`)
-            .map(fn => (fn.includes('-win') ? `${fn}.exe` : fn));
+            .map((os) => `${buildConfig.outdir}/${pkg.name}-v${pkg.version}-${os}-x64`)
+            .map((fn) => (fn.includes('-win') ? `${fn}.exe` : fn));
 
         for (const originalFn of origBinaries) {
             const newFn = newBinaries[origBinaries.indexOf(originalFn)];
             renameSync(originalFn, newFn);
-            spawnSync('chmod', [ '+x', newFn ], { stdio: 'ignore' });
+            spawnSync('chmod', ['+x', newFn], { stdio: 'ignore' });
         }
     }
 

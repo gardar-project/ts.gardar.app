@@ -52,7 +52,7 @@ class Builder {
     compile() {
         const results = [];
 
-        buildConfigs.forEach(buildConfig => {
+        buildConfigs.forEach((buildConfig) => {
             // get names of package dependencies so they can be marked as external
             const dependencyNames = Object.keys(require(`${buildConfig.basePath}/package.json`)['dependencies'] || []);
 
@@ -65,7 +65,7 @@ class Builder {
                     __COMPILED_AT__: `'${new Date().toUTCString()}'`,
                     ...buildConfig.constants,
                 },
-                entryPoints: [ buildConfig.entry ],
+                entryPoints: [buildConfig.entry],
                 external: dependencyNames,
                 format: buildConfig.format,
                 keepNames: true,
@@ -97,10 +97,10 @@ class Builder {
     }
 
     async reportCompileResults(results) {
-        results.errors.forEach(errorMsg => this.writeln(`* Error: ${errorMsg}`));
-        results.warnings.forEach(msg => this.writeln(`* Warning: ${msg}`));
+        results.errors.forEach((errorMsg) => this.writeln(`* Error: ${errorMsg}`));
+        results.warnings.forEach((msg) => this.writeln(`* Warning: ${msg}`));
 
-        Object.keys(results.metafile.outputs).forEach(fn => {
+        Object.keys(results.metafile.outputs).forEach((fn) => {
             this.writeln(`*   » created '${fn}' (${this.sizeForDisplay(results.metafile.outputs[fn].bytes)})`);
         });
     }
@@ -117,11 +117,11 @@ class Builder {
 
         process.argv
             .slice(2)
-            .map(arg => {
+            .map((arg) => {
                 const hasMappedArg = typeof argMap[arg] === 'undefined';
                 return hasMappedArg ? { name: arg.replace(/^-+/, ''), value: true } : argMap[arg];
             })
-            .forEach(data => (this.config[data.name] = data.value));
+            .forEach((data) => (this.config[data.name] = data.value));
     }
 
     async run() {
@@ -138,7 +138,7 @@ class Builder {
         const finishedTs = new Date().getTime();
 
         if (this.config.verbose) {
-            results.forEach(async result => await this.reportCompileResults(result));
+            results.forEach(async (result) => await this.reportCompileResults(result));
         }
 
         this.writeln((this.config.verbose ? `* D` : `d`) + `one. (${finishedTs - startedTs} ms)`);

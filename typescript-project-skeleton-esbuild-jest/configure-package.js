@@ -32,11 +32,11 @@ const packageInfo = {
     },
 };
 
-const runCommand = str => {
+const runCommand = (str) => {
     cp.execSync(str, { cwd: __dirname, encoding: 'utf-8', stdio: 'inherit' });
 };
 
-const gitCommand = command => {
+const gitCommand = (command) => {
     return cp.execSync(`git ${command}`, { env: process.env, cwd: __dirname, encoding: 'utf-8', stdio: 'pipe' }) || '';
 };
 
@@ -53,7 +53,7 @@ const askQuestion = async (prompt, defaultValue = '') => {
         result = false;
     }
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         if (!result || result.trim().length === 0) {
             result = defaultValue;
         }
@@ -65,7 +65,7 @@ const askQuestion = async (prompt, defaultValue = '') => {
 async function getGithubApiEndpoint(endpoint) {
     const url = `https://api.github.com/${endpoint}`.replace('//', '/');
 
-    const requestJson = async url => {
+    const requestJson = async (url) => {
         const options = {
             headers: {
                 'User-Agent': 'permafrost-dev-template-configure/1.0',
@@ -76,7 +76,7 @@ async function getGithubApiEndpoint(endpoint) {
         return new Promise((resolve, reject) => {
             const req = https.get(url, options);
 
-            req.on('response', async res => {
+            req.on('response', async (res) => {
                 let body = '';
                 res.setEncoding('utf-8');
 
@@ -87,7 +87,7 @@ async function getGithubApiEndpoint(endpoint) {
                 resolve(JSON.parse(body));
             });
 
-            req.on('error', err => {
+            req.on('error', (err) => {
                 throw new err();
                 reject(err);
             });
@@ -125,10 +125,10 @@ function searchCommitsForGithubUsername() {
 
     const committers = gitCommand(`log --author='@users.noreply.github.com'  --pretty='%an:%ae' --reverse`)
         .split('\n')
-        .map(line => line.trim())
-        .map(line => ({ name: line.split(':')[0], email: line.split(':')[1] }))
-        .filter(item => !item.name.includes('[bot]'))
-        .filter(item => item.name.toLowerCase().localeCompare(authorName.toLowerCase()) === 0);
+        .map((line) => line.trim())
+        .map((line) => ({ name: line.split(':')[0], email: line.split(':')[1] }))
+        .filter((item) => !item.name.includes('[bot]'))
+        .filter((item) => item.name.toLowerCase().localeCompare(authorName.toLowerCase()) === 0);
 
     if (!committers.length) {
         return '';
@@ -191,7 +191,7 @@ const replaceVariablesInFile = (filename, packageInfo) => {
 };
 
 const processFiles = (directory, packageInfo) => {
-    const files = fs.readdirSync(directory).filter(f => {
+    const files = fs.readdirSync(directory).filter((f) => {
         return ![
             '.',
             '..',
@@ -213,7 +213,7 @@ const processFiles = (directory, packageInfo) => {
         ].includes(basename(f));
     });
 
-    files.forEach(fn => {
+    files.forEach((fn) => {
         const fqName = `${directory}/${fn}`;
         const relativeName = fqName.replace(basePath + '/', '');
         const isPath = is_dir(fqName);
@@ -253,7 +253,7 @@ const conditionalAsk = async (obj, propName, onlyEmpty, prompt, allowEmpty = fal
         }
     }
 
-    return new Promise(resolve => resolve());
+    return new Promise((resolve) => resolve());
 };
 
 const populatePackageInfo = async (onlyEmpty = false) => {
@@ -291,9 +291,9 @@ const populatePackageInfo = async (onlyEmpty = false) => {
     }
 };
 
-const safeUnlink = path => fs.existsSync(path) && fs.unlinkSync(path);
-const getWorkflowFilename = name => `${__dirname}/.github/workflows/${name}.yml`;
-const getGithubConfigFilename = name => `${__dirname}/.github/${name}.yml`;
+const safeUnlink = (path) => fs.existsSync(path) && fs.unlinkSync(path);
+const getWorkflowFilename = (name) => `${__dirname}/.github/workflows/${name}.yml`;
+const getGithubConfigFilename = (name) => `${__dirname}/.github/${name}.yml`;
 const writeFormattedJson = (filename, data) => fs.writeFileSync(filename, JSON.stringify(data, null, 4), { encoding: 'utf-8' });
 
 class PackageFile {
@@ -455,7 +455,7 @@ class Features {
             pkg.deleteScripts('lint', 'lint:fix').replaceScript('fix', pkg.pkg.scripts['fix'].replace('&& npm run lint:fix', ''));
 
             for (const key of Object.keys(pkg.pkg['lint-staged'])) {
-                pkg.pkg['lint-staged'][key] = pkg.pkg['lint-staged'].filter(cmd => !cmd.includes('eslint'));
+                pkg.pkg['lint-staged'][key] = pkg.pkg['lint-staged'].filter((cmd) => !cmd.includes('eslint'));
             }
 
             pkg.save();
@@ -512,9 +512,9 @@ class Features {
 
         for (let feature of this.features) {
             if (feature.dependsOn.length > 0) {
-                const dependencies = feature.dependsOn.map(dep => state[dep]);
+                const dependencies = feature.dependsOn.map((dep) => state[dep]);
 
-                feature.enabled = dependencies.every(dep => dep);
+                feature.enabled = dependencies.every((dep) => dep);
             }
 
             if (feature.enabled) {
@@ -631,7 +631,7 @@ class OptionalPackages {
         default: '',
         dependsOn: [],
         name: 'otherPackages',
-        add: values => {
+        add: (values) => {
             cp.execSync('npm install ' + values.join(' '), { cwd: __dirname, stdio: 'inherit' });
         },
     };
@@ -649,7 +649,7 @@ class OptionalPackages {
         const packageList = await askQuestion(this.otherPackages.prompt, this.otherPackages.default);
 
         if (packageList.length > 0) {
-            this.otherPackages.add(packageList.split(',').map(pkg => pkg.trim()));
+            this.otherPackages.add(packageList.split(',').map((pkg) => pkg.trim()));
         }
     }
 }
@@ -658,7 +658,7 @@ async function configureOptionalFeatures() {
     await new Features().run();
 }
 
-const askBooleanQuestion = async str => {
+const askBooleanQuestion = async (str) => {
     let resultStr = await askQuestion(`${str} [Y/n] `);
     resultStr = resultStr.toString().trim();
 
