@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "esbuild": "0.17.8"
+  },
+  "scripts": {
+    "build": "esbuild src/app.ts --sourcemap --outfile=build/app.ts"
+  }
+}
