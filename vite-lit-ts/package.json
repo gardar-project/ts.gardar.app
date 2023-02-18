@@ -1,5 +1,5 @@
 {
-  "name": "vite-lit",
+  "name": "vite-lit-ts",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,17 +7,20 @@
   "exports": {
     ".": "./dist/my-element.es.js"
   },
+  "types": "types/my-element.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "tsc && vite build"
   },
   "dependencies": {
     "lit": "^2.6.1"
   },
   "devDependencies": {
+    "typescript": "^4.9.3",
     "vite": "^4.1.0"
   }
 }
