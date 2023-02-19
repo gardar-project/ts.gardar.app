@@ -1,0 +1,41 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "baseUrl": "./src",
+        "noEmitOnError": false,
+        "allowSyntheticDefaultImports": true,
+        "allowUnreachableCode": false,
+        "checkJs": true,
+        "composite": true,
+        "declaration": true,
+        "esModuleInterop": true,
+        "emitDeclarationOnly": false,
+        "forceConsistentCasingInFileNames": true,
+        "incremental": true,
+        "inlineSources": true,
+        "isolatedModules": true, // important for dev mode
+        "lib": [ "ESNext", "DOM" ],
+        "mapRoot": "./src/",
+        "module": "ESNext",
+        "noImplicitAny": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "outDir": "./.build/",
+        "pretty": true,
+        "preserveConstEnums": true,
+        "removeComments": true,
+        "rootDir": "./src/",
+        "sourceMap": true,
+        "sourceRoot": "./src/",
+        "strict": true,
+        "strictNullChecks": true,
+        "target": "ESNext",
+        "typeRoots": ["../lib.gardar.app"],
+        "tsBuildInfoFile": "./.build/.tsbuildinfo"
+        // "noEmit": true, // TODO: verify if affects dev mode?
+    },
+    "exclude": [  "node_modules", "test" ],
+    "include": [ "./src/**/*.ts" ]
+}
