@@ -15,13 +15,13 @@
   "types": ".build/gardar.d.ts",
   "type": "module",
   "scripts": {
-    "lint": "eslint src/ --ext .js,.ts --ignore-path .gitignore --fix",
-    "test": "tsc --no-emit && jest --verbose",
+    "lint": "npm audit fix && eslint src/ --ext .js,.ts --ignore-path .gitignore --fix",
+    "test": "tsc && jest --verbose",
     "clean": "rm -rf .build/",
     "docs": "typedoc --entryPoints src/gardar.ts",
-    "build": "esbuild --bundle src/gardar.ts --minify --sourcemap=external --outfile=.build/gardar.js",
+    "build": "esbuild --tsconfig=./tsconfig.json src/gardar.ts --packages=external --minify --sourcemap=external --outdir=.build",
     "deploy": "gh-pages --dotfiles --no-history --dist .",
-    "dev": "esbuild --watch --bundle src/gardar.ts --outfile=.build/gardar.js --servedir=."
+    "dev": "esbuild --tsconfig=./tsconfig.json --packages=external --watch src/gardar.ts --outdir=.build --serve=localhost:8666 --servedir=."
   },
   "dependencies": {
 		"esbuild-wasm": "0.8.27",
@@ -39,7 +39,7 @@
     "eslint": "^8.14.0",
     "jest": "27.0.0",
     "ts-jest": "^27.1.4",
-    "typedoc": "^0.22.15",
+    "typedoc": "^0.23.22",
     "typescript": "^4.9",
     "gh-pages": "^3.1.0"
   }
